@@ -1,0 +1,119 @@
+* {
+	box-sizing: border-box;
+	user-select: none;
+}
+
+body {
+	margin: 0;
+	font-family: monospace;
+	background: #ece7e2;
+	font-size: small;
+}
+
+:root {
+	--primary: #833b00;
+	--primary-hover: #833b0065;
+	--secondary: black;
+	--background: #f0e4ce;
+	--text: #efefef;
+	--optionnal: #535353;
+	--success: green;
+}
+
+h2 {
+	color: var(--secondary);
+	text-align: center;
+	font-size: small;
+	margin: 0;
+}
+
+p {
+	color: var(--secondary);
+	margin: 5px;
+}
+
+.report-card {
+	background: var(--background);
+	padding: 0.5rem;
+}
+
+.report-card > .report-card__header,
+.report-card__body,
+.report-card__footer-start,
+.report-card__footer-end {
+	margin: 1rem 0;
+}
+
+.report-card__header,
+.report-card__body,
+.report-card__footer-start,
+.report-card__footer-end {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.report-card__head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+	padding: 0.5rem 1.2rem;
+	border: 0.2rem solid var(--primary);
+	border-radius: 1rem;
+}
+
+.report-card__enseigne {
+	display: flex;
+	justify-content: start;
+	align-items: center;
+}
+
+.report-card__infos {
+	text-align: center;
+	list-style-type: none;
+	width: 60%;
+	margin: 0;
+	padding: 0;
+}
+
+.report-card__infos > .infos__item {
+	margin: 0.7rem 0;
+}
+
+.report-card__school-logo {
+	width: 100px;
+	height: 100px;
+	margin-right: 1rem;
+	border-radius: 1rem;
+}
+
+.report-card__header-title {
+	color: var(--primary);
+	font-size: 2rem;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+
+.report-card__body .report-card__row:hover {
+	background-color: var(--primary-hover);
+}
+
+.report-card__col {
+	border: 0.1rem solid var(--primary);
+	padding: 0.36rem 0.5rem;
+}
+
+.report-card__header .report-card__row .report-card__col {
+	text-align: start;
+}
+
+.report-card__body .report-card__row th {
+	color: var(--text);
+	background-color: var(--primary);
+	border-right: 0.1rem solid var(--text);
+}
+
+.check {
+	text-align: center;
+}
