@@ -229,6 +229,30 @@ window.GSC = {
 				return await res.json();
 			},
 		},
+		scolarities: {
+			add: async (formData) => {
+				const res = await fetch(
+					`${API_BASE}/Scolarity.php?action=add`,
+					{
+						method: "POST",
+						body: formData,
+					}
+				);
+				return await res.json();
+			},
+			list: async () => {
+				const res = await fetch(
+					`${API_BASE}/Scolarity.php?action=list`
+				);
+				return await res.json();
+			},
+			pay: async (id) => {
+				const res = await fetch(
+					`${API_BASE}/Scolarity.php?action=pay&id=${id}`
+				);
+				return await res.json();
+			},
+		},
 		settings: {
 			years: {
 				add: async (formData) => {

@@ -953,13 +953,47 @@ class SettingsController
     {
         try {
             $db = $this->Database();
-            $sql = "INSERT INTO fees (level_id, schooling_id, fee_amount) VALUES (:level_id, :schooling_id, :fee_amount)";
+
+            // Par défaut, tranches = 0 (néant)
+            $tranche1 = $tranche2 = $tranche3 = 0;
+
+            // Vérifier si c'est Contribution
+            $stmt = $db->prepare("SELECT schooling_name FROM schoolings WHERE schooling_id = ?");
+            $stmt->execute([$data['schooling_id']]);
+            $schoolingName = $stmt->fetchColumn();
+
+            if (strtolower($schoolingName) === 'contribution') {
+                $tranche1 = !empty($data['tranche1']) ? $data['tranche1'] : 0;
+                $tranche2 = !empty($data['tranche2']) ? $data['tranche2'] : 0;
+                $tranche3 = !empty($data['tranche3']) ? $data['tranche3'] : 0;
+            }
+
+            $sql = "INSERT INTO fees (
+                    level_id, 
+                    schooling_id, 
+                    fee_amount, 
+                    tranche1, 
+                    tranche2, 
+                    tranche3
+                )
+                VALUES (
+                    :level_id, 
+                    :schooling_id, 
+                    :fee_amount, 
+                    :tranche1, 
+                    :tranche2, 
+                    :tranche3
+                )";
             $query = $db->prepare($sql);
             $query->execute([
                 'level_id' => $data['level_id'],
                 'schooling_id' => $data['schooling_id'],
-                'fee_amount' => $data['fee_amount']
+                'fee_amount' => $data['fee_amount'],
+                'tranche1' => $tranche1,
+                'tranche2' => $tranche2,
+                'tranche3' => $tranche3
             ]);
+
             return ["success" => true, "message" => "Frais ajouté avec succès !"];
         } catch (Exception $e) {
             return ["success" => false, "message" => $e->getMessage()];
@@ -970,19 +1004,42 @@ class SettingsController
     {
         try {
             $db = $this->Database();
-            $sql = "UPDATE fees SET level_id = :level_id, schooling_id = :schooling_id, fee_amount = :fee_amount WHERE fee_id = :fee_id";
+
+            // Par défaut, tranches = 0 (néant)
+            $tranche1 = $tranche2 = $tranche3 = 0;
+
+            // Vérifier si c'est Contribution
+            $stmt = $db->prepare("SELECT schooling_name FROM schoolings WHERE schooling_id = ?");
+            $stmt->execute([$data['schooling_id']]);
+            $schoolingName = $stmt->fetchColumn();
+
+            if (strtolower($schoolingName) === 'contribution') {
+                $tranche1 = !empty($data['tranche1']) ? $data['tranche1'] : 0;
+                $tranche2 = !empty($data['tranche2']) ? $data['tranche2'] : 0;
+                $tranche3 = !empty($data['tranche3']) ? $data['tranche3'] : 0;
+            }
+
+            $sql = "UPDATE fees 
+                    SET level_id = :level_id, schooling_id = :schooling_id, fee_amount = :fee_amount,
+                        tranche1 = :tranche1, tranche2 = :tranche2, tranche3 = :tranche3
+                    WHERE fee_id = :fee_id";
             $query = $db->prepare($sql);
             $query->execute([
                 'level_id' => $data['level_id'],
                 'schooling_id' => $data['schooling_id'],
                 'fee_amount' => $data['fee_amount'],
+                'tranche1' => $tranche1,
+                'tranche2' => $tranche2,
+                'tranche3' => $tranche3,
                 'fee_id' => $data['fee_id']
             ]);
+
             return ["success" => true, "message" => "Frais modifié avec succès !"];
         } catch (Exception $e) {
             return ["success" => false, "message" => $e->getMessage()];
         }
     }
+
 
     public function deleteFee($fee_id)
     {

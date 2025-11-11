@@ -19,8 +19,8 @@
 
 				<div class="form__group">
 					<label for="fee_id" class="group__label">ID : </label>
-					<input type="hidden" name="fee_id" placeholder="ID" id="fee_id"
-						class="group__input" required />
+					<input type="text" name="fee_id" placeholder="ID" id="fee_id"
+						class="group__input field-hidden" required />
 				</div>
 
 				<div class="form__group">
@@ -31,16 +31,32 @@
 
 				<div class="form__group">
 					<label for="schooling_id" class="group__label">Type de scolarité : </label>
-					<select name="schooling_id" id="schooling_id" class="group__input">
-						<option value="Type de scolarité" disabled selected>Type de scolarité</option>
-					</select>
+					<select name="schooling_id" id="schooling_id" class="group__input" required></select>
+				</div>
+
+				<!-- ✅ Champs des tranches (cachés par défaut) -->
+				<div id="tranches-container" style="display:none; margin-top:1rem;">
+					<h3 style="margin-bottom:8px;">Tranches de paiement :</h3>
+
+					<div class="form__group">
+						<label for="tranche1" class="group__label">Tranche 1 :</label>
+						<input type="number" step="0.01" name="tranche1" id="tranche1" class="group__input" placeholder="Montant tranche 1">
+					</div>
+
+					<div class="form__group">
+						<label for="tranche2" class="group__label">Tranche 2 :</label>
+						<input type="number" step="0.01" name="tranche2" id="tranche2" class="group__input" placeholder="Montant tranche 2">
+					</div>
+
+					<div class="form__group">
+						<label for="tranche3" class="group__label">Tranche 3 :</label>
+						<input type="number" step="0.01" name="tranche3" id="tranche3" class="group__input" placeholder="Montant tranche 3">
+					</div>
 				</div>
 
 				<div class="form__group">
 					<label for="level_id" class="group__label">Classe : </label>
-					<select name="level_id" id="level_id" class="group__input">
-						<option value="Classe" disabled selected>Classe</option>
-					</select>
+					<select name="level_id" id="level_id" class="group__input" required></select>
 				</div>
 
 				<div class="form__group">

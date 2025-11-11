@@ -22,6 +22,9 @@
 						<th class="list__row-item">Type.Scolarité</th>
 						<th class="list__row-item">Classe</th>
 						<th class="list__row-item">Montant</th>
+						<th class="list__row-item">Tranche 1</th>
+						<th class="list__row-item">Tranche 2</th>
+						<th class="list__row-item">Tranche 3</th>
 						<th class="list__row-item">Date.Ajout</th>
 						<th class="list__row-item" colspan="2">Action</th>
 					</tr>

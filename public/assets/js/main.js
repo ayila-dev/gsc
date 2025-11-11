@@ -14,6 +14,7 @@ import { selectRoom } from "./lib.js";
 import { selectTeacher } from "./lib.js";
 import { selectParent } from "./lib.js";
 import { currentLinkSidebar } from "./lib.js";
+import { toggleContainerOnOptionText } from "./lib.js";
 
 /**
  * Main script for the GSC application
@@ -520,12 +521,22 @@ document.addEventListener("DOMContentLoaded", (e) => {
 			userDropdownMenu();
 			selectSchooing();
 			selectLevel();
+			toggleContainerOnOptionText(
+				"schooling_id",
+				"tranches-container",
+				"contribution"
+			);
 			logoutUser();
 			console.log("Page d'ajout d'un frais de scolarité");
 			break;
 
 		case "/gsc/backend/Views/pages/settings/school-fees/edit-fee.php":
 			userDropdownMenu();
+			toggleContainerOnOptionText(
+				"schooling_id",
+				"tranches-container",
+				"contribution"
+			);
 			logoutUser();
 			console.log("Page d'édition d'un frais de scolarité");
 			break;

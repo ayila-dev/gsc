@@ -71,6 +71,47 @@ export const showCustomFieldAmount = () => {
 	});
 };
 
+/**
+ * Affiche ou cache un conteneur de champs en fonction de la valeur d'un select.
+ * @param {string} selectId - L'ID du <select> à surveiller
+ * @param {string} containerId - L'ID du conteneur à afficher/masquer
+ * @param {string} triggerValue - La valeur qui déclenche l'affichage
+ */
+export function toggleContainerOnOptionText(
+	selectId,
+	containerId,
+	triggerText
+) {
+	const selectElement = document.getElementById(selectId);
+	const containerElement = document.getElementById(containerId);
+
+	if (!selectElement || !containerElement) return;
+
+	// Fonction interne pour vérifier et afficher/masquer
+	function updateDisplay() {
+		const selectedOption =
+			selectElement.options[selectElement.selectedIndex];
+		if (
+			selectedOption &&
+			selectedOption.text.toLowerCase() === triggerText.toLowerCase()
+		) {
+			containerElement.style.display = "block";
+		} else {
+			containerElement.style.display = "none";
+			// Réinitialiser les champs du conteneur
+			containerElement
+				.querySelectorAll("input")
+				.forEach((input) => (input.value = ""));
+		}
+	}
+
+	// Initialisation
+	updateDisplay();
+
+	// Événement de changement
+	selectElement.addEventListener("change", updateDisplay);
+}
+
 export const gradeEditor = () => {
 	// Éditeur de notes
 	// Sélectionner tous les boutons "Éditer"

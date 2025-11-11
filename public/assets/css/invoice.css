@@ -1,0 +1,182 @@
+:root {
+	--primary: #005baa;
+	--secondary: #f2f6fc;
+	--success: #28a745;
+	--warning: #ffc107;
+	--danger: #dc3545;
+	--text-dark: #333;
+	--text-light: #777;
+	--border: #ddd;
+}
+body {
+	font-family: "Poppins", Arial, sans-serif;
+	background: var(--secondary);
+	margin: 0;
+	padding: 40px;
+}
+.receipt {
+	max-width: 750px;
+	margin: 0 auto;
+	background: #fff;
+	padding: 30px 40px;
+	border-radius: 10px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+	position: relative;
+	overflow: hidden;
+}
+.receipt::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 200px;
+	height: 200px;
+	background: radial-gradient(
+		circle at top right,
+		rgba(0, 91, 170, 0.15),
+		transparent 60%
+	);
+	pointer-events: none;
+}
+header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 3px solid var(--primary);
+	padding-bottom: 10px;
+}
+header .school {
+	color: var(--primary);
+}
+header img {
+	height: 70px;
+	border-radius: 10px;
+}
+.title {
+	text-align: center;
+	margin: 25px 0;
+	text-transform: uppercase;
+	font-size: 22px;
+	color: var(--primary);
+	letter-spacing: 1px;
+}
+.receipt-number {
+	text-align: right;
+	font-size: 14px;
+	color: var(--text-light);
+	margin-top: -15px;
+	margin-bottom: 25px;
+}
+.info-table,
+.summary-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 15px;
+}
+.info-table th,
+.summary-table th {
+	width: 40%;
+	text-align: left;
+	padding: 8px;
+	color: var(--text-dark);
+	font-weight: 500;
+}
+.info-table td,
+.summary-table td {
+	padding: 8px;
+	text-align: left;
+	color: var(--text-light);
+}
+.status {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 6px;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 13px;
+	letter-spacing: 0.5px;
+}
+.status.solde {
+	background: var(--success);
+	color: #fff;
+}
+.status.encours {
+	background: var(--warning);
+	color: #000;
+}
+.status.nonpaye {
+	background: var(--danger);
+	color: #fff;
+}
+.summary {
+	margin-top: 10px;
+	background: var(--secondary);
+	padding: 15px;
+	border-radius: 8px;
+}
+.summary p {
+	margin: 4px 0;
+	font-size: 15px;
+}
+.signature {
+	margin-top: 40px;
+	display: flex;
+	justify-content: space-between;
+	font-size: 14px;
+}
+.signature div {
+	text-align: center;
+	width: 45%;
+}
+footer {
+	text-align: center;
+	margin-top: 35px;
+	font-size: 12px;
+	color: var(--text-light);
+}
+hr {
+	border: none;
+	border-top: 1px solid var(--border);
+	margin: 15px 0;
+}
+
+#download-pdf {
+	background: #007bff;
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 600;
+	border: none;
+	border-radius: 12px;
+	padding: 12px 28px;
+	cursor: pointer;
+	box-shadow: 0 4px 8px rgba(0, 123, 255, 0.25);
+	transition: all 0.25s ease-in-out;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#download-pdf:hover {
+	background: #0056b3;
+	box-shadow: 0 6px 12px rgba(0, 86, 179, 0.35);
+	transform: translateY(-2px);
+}
+
+#download-pdf:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+#download-pdf i {
+	font-size: 1.1rem;
+}
+
+@media print {
+	table,
+	figure {
+		page-break-inside: avoid;
+	}
+	.no-print {
+		display: none !important;
+	}
+}

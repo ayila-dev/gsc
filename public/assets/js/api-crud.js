@@ -1820,7 +1820,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 						tbody.appendChild(tr);
 					}
 
-					// === GÉNÉRATION DU PDF AVEC HTML2PDF ===
+					// === GÉNÉRATION DU PROMGRAMME EN PDF AVEC HTML2PDF ===
 					document.addEventListener("click", async (e) => {
 						if (e.target.id === "download-pdf") {
 							const element = document.getElementById(
@@ -3964,6 +3964,329 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 			break;
 		}
 
+		// ===============================
+		// SETTINGS MANAGER – SCOLARITIES
+		// ===============================
+		case "list-scolarity": {
+			const tbody = document.querySelector(".list__body");
+			if (!tbody) return;
+
+			try {
+				const scolarities = await GSC.API.scolarities.list();
+
+				if (!scolarities || scolarities.length === 0) {
+					tbody.innerHTML = `<tr><td colspan="14" class="list__row-item">Aucune liste de paiement trouvée</td></tr>`;
+					const totalCell = document.querySelector(
+						".list__footer .list__row-item[colspan]"
+					);
+					if (totalCell)
+						totalCell.textContent = "0 paiement enregistré";
+					return;
+				}
+
+				tbody.innerHTML = "";
+				let i = 1;
+
+				scolarities.forEach((value) => {
+					const tr = document.createElement("tr");
+					tr.classList.add("list__row");
+
+					// Déterminer la classe de couleur selon le statut
+					let statusClass = "warning";
+					if (value.payment_status === "Non payé")
+						statusClass = "danger";
+					else if (value.payment_status === "Soldé")
+						statusClass = "success";
+
+					tr.innerHTML = `
+						<td class="list__row-item">${i++}</td>
+						<td class="list__row-item">${value.student_matricule}</td>
+						<td class="list__row-item">${value.student_lastname}</td>
+						<td class="list__row-item">${value.student_firstname}</td>
+						<td class="list__row-item">${value.level_name}</td>
+						<td class="list__row-item">${value.serie_name}</td>
+						<td class="list__row-item">${value.room_name}</td>
+						<td class="list__row-item">${value.year_name}</td>
+						<td class="list__row-item">${value.parent_phone}</td>
+						<td class="list__row-item">${value.amount_paid}</td>
+						<td class="list__row-item">${value.amount_due}</td>
+						<td class="list__row-item">${value.last_payment_date ?? "—"}</td>
+						<td class="list__row-item ${statusClass}">${value.payment_status}</td>
+						<td class="list__row-item">
+							<a href="edit-scolarity.php?id=${value.student_id}" class="list__btn btn-edit">
+								Payer
+							</a>
+						</td>
+					`;
+
+					tbody.appendChild(tr);
+				});
+
+				const totalCell = document.querySelector(
+					".list__footer .list__row-item[colspan]"
+				);
+				if (totalCell) {
+					const total = scolarities.length;
+					totalCell.textContent =
+						total +
+						(total > 1
+							? " scolarités enregistrées"
+							: " scolarité enregistrée");
+				}
+			} catch (err) {
+				console.error(err);
+				showPopup(
+					"danger",
+					"Impossible de charger la liste des paiements."
+				);
+			}
+			break;
+		}
+
+		case "edit-scolarity": {
+			const params = new URLSearchParams(window.location.search);
+			const id = params.get("id");
+
+			console.log("URL params:", window.location.search);
+			console.log("id récupéré:", id);
+
+			if (!id) return showPopup("danger", "Aucun élève sélectionné.");
+
+			let data = null;
+
+			try {
+				const res = await GSC.API.scolarities.pay(id);
+
+				if (!res.success) {
+					showPopup("danger", res.message);
+					return;
+				}
+
+				data = res.message;
+
+				document.querySelector(".student__infos").innerHTML = `
+						<tr class="infosline">
+							<th class="infos">Matricule :</th>
+							<td class="infos">${data.student_matricule}</td>
+						</tr>
+						<tr class="infosline">
+							<th class="infos">Nom :</th>
+							<td class="infos">${data.student_lastname}</td>
+						</tr>
+						<tr class="infosline">
+							<th class="infos">Prénom(s) :</th>
+							<td class="infos">${data.student_firstname}</td>
+						</tr>
+						<tr class="infosline">
+							<th class="infos">Montant Payé :</th>
+							<td class="infos text-success">${data.amount_paid} FCFA</td>
+						</tr>
+						<tr class="infosline">
+							<th class="infos">Montant Dû :</th>
+							<td class="infos text-danger">${data.amount_due} FCFA</td>
+						</tr>
+						<tr class="infosline">
+							<th class="infos">Statut :</th>
+							<td class="infos text-warning">${data.payment_status}</td>
+						</tr>
+					`;
+
+				// Remplir les champs cachés
+				document.getElementById("student_id").value = data.student_id;
+				document.getElementById("schooling_id").value =
+					data.schooling_id ?? 1; // par défaut si null
+				document.getElementById("payement_mode").value = "Espèces";
+
+				const select = document.getElementById("tranches");
+				select.innerHTML = `<option disabled selected>Tranches</option>`;
+
+				["tranche1", "tranche2", "tranche3"].forEach((t, i) => {
+					if (data[t] && data[t] > 0) {
+						const opt = document.createElement("option");
+						opt.value = data[t];
+						opt.textContent = `${i + 1}ᵉ tranche ............ ${
+							data[t]
+						} FCFA`;
+						select.appendChild(opt);
+					}
+				});
+
+				const optOther = document.createElement("option");
+				optOther.value = "other";
+				optOther.textContent = "Autre montant";
+				select.appendChild(optOther);
+
+				// Afficher le champ “Autre montant”
+				const customAmount = document.getElementById("custom-amount");
+				select.addEventListener("change", () => {
+					customAmount.style.display =
+						select.value === "other" ? "block" : "none";
+				});
+			} catch (err) {
+				console.error(err);
+				showPopup(
+					"danger",
+					"Erreur lors du chargement des informations."
+				);
+			}
+
+			// Soumission du formulaire
+			const form = document.getElementById("form-payement");
+			form.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const select = document.getElementById("tranches");
+				let amount = select.value;
+				if (amount === "other")
+					amount = document.getElementById("other-amount").value;
+
+				const formData = new FormData(form);
+				formData.set("payement_amount", amount);
+
+				try {
+					const result = await GSC.API.scolarities.add(formData);
+					if (result.success) {
+						showPopup(
+							"success",
+							"Paiement enregistré avec succès !"
+						);
+
+						// relire l'élève pour obtenir les montants et statut à jour
+						try {
+							// attend 300ms pour laisser la BD se stabiliser (optionnel)
+							await new Promise((r) => setTimeout(r, 300));
+
+							const fresh = await GSC.API.scolarities.pay(id);
+							if (!fresh || !fresh.success) {
+								// fallback : utilise 'data' local si pas de réponse
+								console.warn(
+									"Impossible de récupérer le détail mis à jour, utilisation des données locales."
+								);
+								// build minimal query from local variables (still safer than nothing)
+								const trancheLabel =
+									select.value === "other"
+										? `Autre: ${amount}`
+										: `${
+												select.options[
+													select.selectedIndex
+												].text
+										  }`;
+								const qs = new URLSearchParams({
+									nom: `${data.student_lastname} ${data.student_firstname}`,
+									matricule: data.student_matricule,
+									classe: `${data.level_name} ${data.room_name}`,
+									annee: data.year_name,
+									parent: data.parent_phone,
+									tranche: trancheLabel,
+									montant: amount,
+									reste: data.amount_due, // not updated but best-effort
+									mode: "Espèces",
+									statut: data.payment_status,
+									total: data.fee_amount,
+									paye: data.amount_paid,
+									solde: data.amount_due,
+								});
+								window.location.href = `/gsc/backend/Views/pages/scolarities/invoice/invoice.php?${qs.toString()}`;
+								return;
+							}
+
+							// Normal path: fresh.success === true
+							// Support both shapes: fresh.data or fresh.message (we saw both)
+							const freshData =
+								fresh.data ?? fresh.message ?? null;
+							if (!freshData) {
+								throw new Error("Réponse serveur mal formée");
+							}
+
+							// tranche label: if other, show amount; else use option text (safer)
+							const trancheLabel =
+								select.value === "other"
+									? `Autre: ${Number(amount).toLocaleString(
+											"fr-FR"
+									  )}`
+									: select.options[select.selectedIndex]
+											?.text || select.value;
+
+							// Ensure numeric formatting (remove decimals if .00)
+							const format = (v) => {
+								if (v == null) return "0";
+								const n = Number(v);
+								return Number.isNaN(n)
+									? String(v)
+									: n.toLocaleString("fr-FR", {
+											maximumFractionDigits: 2,
+											minimumFractionDigits: 0,
+									  });
+							};
+
+							const qs2 = new URLSearchParams({
+								nom: `${freshData.student_lastname} ${freshData.student_firstname}`,
+								matricule: freshData.student_matricule,
+								classe: `${
+									freshData.level_name ?? data.level_name
+								} ${freshData.room_name ?? data.room_name}`,
+								annee: freshData.year_name ?? data.year_name,
+								parent:
+									freshData.parent_phone ?? data.parent_phone,
+								tranche: trancheLabel,
+								montant: format(amount),
+								reste: format(
+									freshData.amount_due ?? data.amount_due
+								),
+								mode: "Espèces",
+								statut:
+									freshData.payment_status ??
+									data.payment_status,
+								total: format(
+									freshData.fee_amount ?? data.fee_amount
+								),
+								paye: format(
+									freshData.amount_paid ?? data.amount_paid
+								),
+								solde: format(
+									freshData.amount_due ?? data.amount_due
+								),
+							});
+
+							// redirect vers invoice.php avec query proprement encodée
+							window.location.href = `/gsc/backend/Views/pages/scolarities/invoice/invoice.php?${qs2.toString()}`;
+						} catch (err) {
+							console.error(
+								"Erreur lors de récupération post-payment:",
+								err
+							);
+							// fallback: redirect with local data (best-effort)
+							const tryQs = new URLSearchParams({
+								nom: `${data.student_lastname} ${data.student_firstname}`,
+								matricule: data.student_matricule,
+								classe: `${data.level_name} ${data.room_name}`,
+								annee: data.year_name,
+								parent: data.parent_phone,
+								tranche:
+									select.value === "other"
+										? `Autre: ${amount}`
+										: select.options[select.selectedIndex]
+												?.text || select.value,
+								montant: amount,
+								reste: data.amount_due,
+								mode: "Espèces",
+								statut: data.payment_status,
+								total: data.fee_amount,
+								paye: data.amount_paid,
+								solde: data.amount_due,
+							});
+							window.location.href = `/gsc/backend/Views/pages/scolarities/invoice/invoice.php?${tryQs.toString()}`;
+						}
+					} else {
+						showPopup("danger", result.message);
+					}
+				} catch (err) {
+					console.error(err);
+					showPopup("danger", "Erreur réseau ou serveur.");
+				}
+			});
+			break;
+		}
+
 		// ==========================
 		// SETTINGS MANAGER – FEES
 		// ==========================
@@ -4028,6 +4351,9 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 						<td class="list__row-item">${value.schooling_name}</td>
 						<td class="list__row-item">${value.level_name}</td>
 						<td class="list__row-item">${value.fee_amount}</td>
+						<td class="list__row-item">${value.tranche1}</td>
+						<td class="list__row-item">${value.tranche2}</td>
+						<td class="list__row-item">${value.tranche3}</td>
 						<td class="list__row-item">${value.fee_date_add}</td>
 						<td class="list__row-item">
 							<a href="edit-fee.php?id=${value.fee_id}" class="list__btn btn-edit">Éditer</a>
@@ -4169,6 +4495,15 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 				document.getElementById("fee_id").value = res.fee_id;
 				form.querySelector("[name='fee_amount']").value =
 					res.fee_amount;
+				form.querySelector("[name='tranche1']").value = res.tranche1;
+				form.querySelector("[name='tranche2']").value = res.tranche2;
+				form.querySelector("[name='tranche3']").value = res.tranche3;
+
+				const selectSchooling = form.querySelector(
+					"[name='schooling_id']"
+				);
+				selectSchooling.value = res.schooling_id;
+				selectSchooling.dispatchEvent(new Event("change"));
 			} catch (e) {
 				console.error(e);
 				showPopup(

@@ -22,6 +22,18 @@ body {
 	--danger: red;
 }
 
+.danger {
+	color: var(--danger);
+}
+
+.warning {
+	color: var(--warning);
+}
+
+.success {
+	color: var(--success);
+}
+
 /* style of index create & edit user*/
 .login-box {
 	background: #ece7e2;
@@ -242,7 +254,7 @@ main {
 }
 
 .form-filter-container .form__body .form__group .group__input {
-	width: 140px;
+	width: 200px;
 }
 
 .form-filter-container .form__body {

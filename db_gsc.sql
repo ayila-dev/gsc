@@ -100,10 +100,14 @@ CREATE TABLE fees (
     level_id INT NOT NULL,
     schooling_id INT NOT NULL,
     fee_amount DECIMAL(10, 2) NOT NULL,
+    tranche1 DECIMAL(10, 2) NULL,
+    tranche2 DECIMAL(10, 2) NULL,
+    tranche3 DECIMAL(10, 2) NULL,
     fee_date_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (level_id) REFERENCES levels(level_id) ON DELETE CASCADE,
     FOREIGN KEY (schooling_id) REFERENCES schoolings(schooling_id) ON DELETE CASCADE
 );
+
 
 -- 13️⃣ Table users
 CREATE TABLE users (
@@ -250,7 +254,7 @@ CREATE TABLE payements (
     payement_id INT PRIMARY KEY AUTO_INCREMENT,
     schooling_id INT NOT NULL,
     student_id INT NOT NULL,
-    paiement_date DATE NOT NULL,
+    payement_date DATE NOT NULL,
     payement_amount DECIMAL(10, 2) NOT NULL,
     payement_mode VARCHAR(50) NOT NULL,
     payement_statut VARCHAR(50) NOT NULL,
