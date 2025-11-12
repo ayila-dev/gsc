@@ -659,4 +659,30 @@ class UsersController
 
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function selectUserPersonals (): array
+    {
+        $db = $this->Database();
+
+        $sql = "SELECT 
+                        u.user_id,
+                        u.user_firstname,
+                        u.user_lastname,
+                        u.user_email,
+                        u.user_phone,
+                        u.user_birth_date,
+                        u.user_sex,
+                        u.user_date_add,
+                        r.role_name,
+                        p.place_name
+                    FROM users u
+                    INNER JOIN roles r ON u.role_id = r.role_id
+                    INNER JOIN personals ps ON u.user_id = ps.user_id
+                    INNER JOIN places p ON ps.place_id = p.place_id
+                    WHERE u.user_adder_id = " . $_SESSION['user_id'];
+
+        $query = $db->prepare($sql);
+        $query->execute();
+
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

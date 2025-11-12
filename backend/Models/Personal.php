@@ -4,7 +4,7 @@ ini_set("display_errors", 1);
 
 header("Content-Type: application/json");
 
-require_once "../Controllers/UsersController.php";
+require_once __DIR__ . "/../Controllers/UsersController.php";
 
 $action = $_GET['action'] ?? null;
 
@@ -17,7 +17,7 @@ switch ($action) {
         break;
 
     case 'list':
-        echo json_encode($usersController->selectAllUsers());
+        echo json_encode($usersController->selectUserPersonals());
         break;
 
     case 'get':

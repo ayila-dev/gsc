@@ -37,7 +37,7 @@ foreach ($tests as $access) {
     echo hasAccess($access) ? "<strong style='color:green'>Oui</strong><br>" : "<strong style='color:red'>Non</strong><br>";
 }
 
-$motDePasseSaisi = '9\/mQC?@wbc2[';
+$motDePasseSaisi = 'f&\/?n&JQ.TX5';
 $hashEnBDD = password_hash($motDePasseSaisi, PASSWORD_DEFAULT);
 
 echo '<br /><br />';
