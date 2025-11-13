@@ -42,6 +42,10 @@ switch ($action) {
         }
         break;
 
+    case 'place': 
+        echo json_encode($usersController->selectPlacesByTeacherSchedules());
+        break;
+
     default:
         echo json_encode([
             "success" => false,

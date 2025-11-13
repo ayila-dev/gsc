@@ -143,7 +143,7 @@
 				<tfoot class="list__footer">
 					<tr class="list__row">
 						<th class="list__row-item">Total</th>
-						<th class="list__row-item" colspan="16">3 notes enregistrés</th>
+						<th class="list__row-item" colspan="16"></th>
 					</tr>
 				</tfoot>
 			</table>
@@ -151,5 +151,5 @@
 	</div>
 
 <?php
-	include_once __DIR__ . "/partials/footer.php";
+	include_once __DIR__ . "/../../partials/footer.php";
 ?>

@@ -89,6 +89,10 @@ window.GSC = {
 				);
 				return await res.json();
 			},
+			listPlace: async () => {
+				const res = await fetch(`${API_BASE}/Teacher.php?action=place`);
+				return await res.json();
+			},
 		},
 		parents: {
 			add: async (formData) => {
@@ -249,6 +253,41 @@ window.GSC = {
 			pay: async (id) => {
 				const res = await fetch(
 					`${API_BASE}/Scolarity.php?action=pay&id=${id}`
+				);
+				return await res.json();
+			},
+		},
+		grades: {
+			add: async (formData) => {
+				const res = await fetch(
+					`${API_BASE}/Setting.php?action=add-year`,
+					{ method: "POST", body: formData }
+				);
+				return await res.json();
+			},
+			list: async () => {
+				const res = await fetch(
+					`${API_BASE}/Setting.php?action=list-years`
+				);
+				return await res.json();
+			},
+			get: async (id) => {
+				const res = await fetch(
+					`${API_BASE}/Setting.php?action=get-year&id=${id}`
+				);
+				return await res.json();
+			},
+			update: async (id, formData) => {
+				formData.append("year_id", id);
+				const res = await fetch(
+					`${API_BASE}/Setting.php?action=update-year`,
+					{ method: "POST", body: formData }
+				);
+				return await res.json();
+			},
+			delete: async (id) => {
+				const res = await fetch(
+					`${API_BASE}/Setting.php?action=delete-year&id=${id}`
 				);
 				return await res.json();
 			},

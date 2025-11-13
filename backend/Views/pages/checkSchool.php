@@ -4,13 +4,16 @@
         $cycle_id = $_POST['cycle_id'];
 
         if (!empty($year_id) && !empty($cycle_id)) {
-            require_once "../../Controllers/AuthController.php";
+            require_once __DIR__ .  "../../Controllers/AuthController.php";
             $auth = new AuthController();
 
             $school_year = $auth->checkSchoolYearById($year_id);
             $school_cycle = $auth->checkSchoolCycleById($cycle_id);
 
-            session_start();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+
             $_SESSION['year_name'] = $school_year['year_name'];
             $_SESSION['cycle_name'] = $school_cycle['cycle_name'];
             

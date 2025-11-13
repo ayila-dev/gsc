@@ -626,6 +626,84 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 			break;
 		}
 
+		case "school-session": {
+			const content = document.querySelector(".content");
+			if (!content) return;
+
+			try {
+				// load via API
+				const teachers = await GSC.API.teachers.listPlace();
+
+				if (!teachers || teachers.length === 0) {
+					content.innerHTML = `<div styles="width: 100%; text-align: center; font-size: 2rem; ">Aucun enseignant trouvé</div>`;
+					return;
+				}
+
+				content.innerHTML = "";
+
+				const levelList = [
+					"6ème",
+					"5ème",
+					"4ème",
+					"3ème",
+					"2nde",
+					"1ère",
+					"Tle",
+				];
+
+				teachers.forEach((value, index) => {
+					const cycleName = levelList.includes(`${value.level_name}`)
+						? "Secondaire"
+						: "Primaire";
+					const session = document.createElement("div");
+					session.classList.add("session");
+					session.innerHTML = `
+						<form action="checkSchool.php" class="school-session" method="POST" id="school-session-form">
+							<h2 class="form__title">${value.place_name} | ${value.year_name}</h2>
+							<h3>Cycle : ${cycleName}</h3>
+							<h3>Classe : ${value.level_name}</h3>
+							<div class="form__group">
+								<label for="year_id" class="group__label">Année Scolaire :</label>
+								<input
+									type="text"
+									name="year_id"
+									id="year_id"
+									class="group__input field-hidden"
+									value="${value.year_id}"
+								/ >
+							</div>
+
+							<div class="form__group">
+								<label for="cycle_id" class="group__label">Cycle Scolaire :</label>
+								<input
+									type="text"
+									name="cycle_id"
+									id="cycle_id"
+									class="group__input field-hidden"
+									value="${value.cycle_id}"
+								/ >
+							</div>
+
+							<div class="form__group">
+								<button
+									type="submit"
+									name="connect"
+									class="group__button"
+								>
+									Connexion
+								</button>
+							</div>
+						</form>
+					`;
+					content.appendChild(session);
+				});
+			} catch (err) {
+				console.error(err);
+				showPopup("danger", "Erreur réseau.");
+			}
+			break;
+		}
+
 		// =============================
 		// FONCTIONS MANAGER – PARENTS
 		// =============================
