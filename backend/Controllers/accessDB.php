@@ -46,6 +46,8 @@ var_dump(password_verify($motDePasseSaisi, $hashEnBDD));
 
 echo '<br /><br />' . $hashEnBDD . '<br /><br />';
 
+// jacqueskouton@gmail.com
+
 // UPDATE users SET user_password = PASSWORD('$2y$10$K2zefV1A7kro2WiwhQLsJukhsjuYU3rZFXSsL19xLn805xxBi/lMO') WHERE user_email = 'user2@gmail.com';
 ?>
 

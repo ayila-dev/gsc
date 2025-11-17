@@ -37,8 +37,7 @@
 									name="year_id"
 									id="year_id"
 									class="group__input"
-								>
-								</select>
+								></select>
 							</div>
 
 							<div class="form__group">
@@ -47,9 +46,7 @@
 									name="cycle_id"
 									id="cycle_id"
 									class="group__input"
-								>
-									<option value="Cycle" disabled selected>Cycle Scolaire</option>
-								</select>
+								></select>
 							</div>
 
 							<div class="form__group">
@@ -64,7 +61,9 @@
 						</form>
 					</div>
 				</section>
-			<?php } elseif ($_SESSION['role_name'] === "Enseignant") { ?>
+			<?php 
+				} elseif ($_SESSION['role_name'] === "Enseignant") { 
+			?>
 				<section class="content"></section>
 			<?php } ?>
 		</main>

@@ -285,6 +285,7 @@ class SchedulesController
                 WHERE s.level_id = :level_id
                 AND s.serie_id = :serie_id
                 AND s.room_id = :room_id
+                AND p.place_id = :place_id
                 ORDER BY FIELD(s.schedule_day, 'Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'), s.schedule_start_time
             ";
 
@@ -292,7 +293,8 @@ class SchedulesController
             $query->execute([
                 'level_id' => $data['level_id'],
                 'serie_id' => $data['serie_id'],
-                'room_id' => $data['room_id']
+                'room_id' => $data['room_id'],
+                'place_id' => $data['place_id']
             ]);
 
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -300,11 +302,12 @@ class SchedulesController
             $_SESSION['level_id'] = $data['level_id'] ?? null;
             $_SESSION['serie_id'] = $data['serie_id'] ?? null;
             $_SESSION['room_id'] = $data['room_id'] ?? null;
+            $_SESSION['place_id'] = $data['place_id'] ?? null;
 
             $_SESSION['level_name'] = $data['level_name'] ?? ($results[0]['level_name'] ?? null);
             $_SESSION['serie_name'] = $data['serie_name'] ?? ($results[0]['serie_name'] ?? null);
             $_SESSION['room_name'] = $data['room_name'] ?? ($results[0]['room_name'] ?? null);
-            $_SESSION['year_name'] = $results[0]['year_name'] ?? null;
+            $_SESSION['year_n'] = $results[0]['year_name'] ?? null;
 
             return [
                 'success' => true, 
@@ -312,10 +315,12 @@ class SchedulesController
                     'level_id' => $_SESSION['level_id'],
                     'serie_id' => $_SESSION['serie_id'],
                     'room_id' => $_SESSION['room_id'],
+                    'place_id' => $_SESSION['place_id'],
                     'level_name' => $_SESSION['level_name'],
                     'serie_name' => $_SESSION['serie_name'],
                     'room_name' => $_SESSION['room_name'],
-                    'year_name' => $_SESSION['year_name']
+                    'place_name' => $results[0]['place_name'],
+                    'year_name' => $_SESSION['year_n']
                 ],
                 'data' => $results, 
                 'message' => 'Emploi du temps généré avec succès.'

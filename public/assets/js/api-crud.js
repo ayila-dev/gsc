@@ -631,15 +631,8 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 			if (!content) return;
 
 			try {
-				// load via API
+				// Récupérer la liste des lieux/plannings de l'enseignant
 				const teachers = await GSC.API.teachers.listPlace();
-
-				if (!teachers || teachers.length === 0) {
-					content.innerHTML = `<div styles="width: 100%; text-align: center; font-size: 2rem; ">Aucun enseignant trouvé</div>`;
-					return;
-				}
-
-				content.innerHTML = "";
 
 				const levelList = [
 					"6ème",
@@ -651,50 +644,40 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 					"Tle",
 				];
 
-				teachers.forEach((value, index) => {
+				teachers.forEach((value) => {
 					const cycleName = levelList.includes(`${value.level_name}`)
 						? "Secondaire"
 						: "Primaire";
+
 					const session = document.createElement("div");
 					session.classList.add("session");
+
+					// Vérifier si certaines données sont nulles (LEFT JOIN peut produire null)
+					const placeName = value.place_name || "Non attribué";
+					const yearName = value.year_name || "Non défini";
+					const levelName = value.level_name || "Non défini";
+
 					session.innerHTML = `
-						<form action="checkSchool.php" class="school-session" method="POST" id="school-session-form">
-							<h2 class="form__title">${value.place_name} | ${value.year_name}</h2>
-							<h3>Cycle : ${cycleName}</h3>
-							<h3>Classe : ${value.level_name}</h3>
-							<div class="form__group">
-								<label for="year_id" class="group__label">Année Scolaire :</label>
-								<input
-									type="text"
-									name="year_id"
-									id="year_id"
-									class="group__input field-hidden"
-									value="${value.year_id}"
-								/ >
-							</div>
+                <form action="checkSchool.php" class="school-session" method="POST" id="school-session-form">
+                    <h2 class="form__title">${placeName} | ${yearName}</h2>
+                    <h3 class="form__title">Cycle : ${cycleName}</h3>
+                    <h3 class="form__title">Classe : ${levelName}</h3>
 
-							<div class="form__group">
-								<label for="cycle_id" class="group__label">Cycle Scolaire :</label>
-								<input
-									type="text"
-									name="cycle_id"
-									id="cycle_id"
-									class="group__input field-hidden"
-									value="${value.cycle_id}"
-								/ >
-							</div>
+                    <input type="hidden" name="year_id" value="${
+						value.year_id || ""
+					}" />
+                    <input type="hidden" name="cycle_id" value="${
+						value.cycle_id || ""
+					}" />
+					<input type="hidden" name="place_id" value="${value.place_id || ""}" />
 
-							<div class="form__group">
-								<button
-									type="submit"
-									name="connect"
-									class="group__button"
-								>
-									Connexion
-								</button>
-							</div>
-						</form>
-					`;
+                    <div class="form__group">
+                        <button type="submit" name="connect" class="group__button">
+                            Connexion
+                        </button>
+                    </div>
+                </form>
+            `;
 					content.appendChild(session);
 				});
 			} catch (err) {
@@ -1820,12 +1803,14 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 				const level_id = document.body.dataset.levelId;
 				const serie_id = document.body.dataset.serieId;
 				const room_id = document.body.dataset.roomId;
+				const place_id = document.body.dataset.placeId;
 
 				try {
 					const formData = new FormData();
 					formData.append("level_id", level_id);
 					formData.append("serie_id", serie_id);
 					formData.append("room_id", room_id);
+					formData.append("place_id", place_id);
 
 					const result = await GSC.API.schedules.generateTimetablePDF(
 						formData
@@ -1846,6 +1831,8 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 						params.room_name || "";
 					document.getElementById("school-year").textContent =
 						params.year_name || "";
+					document.getElementById("class-places").textContent =
+						params.place_name || "";
 					document.getElementById("class-series").textContent = [
 						"6ème",
 						"5ème",

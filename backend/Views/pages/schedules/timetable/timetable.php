@@ -20,7 +20,7 @@
         data-level-id="<?= $_SESSION['level_id'] ?>"
         data-serie-id="<?= $_SESSION['serie_id'] ?>"
         data-room-id="<?= $_SESSION['room_id'] ?>"
-
+        data-place-id="<?= $_SESSION['place_id'] ?>"
     >
     <div id="timetable-container" class=".a4-page">
         <div class="header">
@@ -30,11 +30,16 @@
             <div class="header-info">
                 <h2>Emploi du Temps Scolaire</h2>
                 <p>
-                <span class="school school-grade">Classe :</span> <span id="class-grade"></span>&nbsp;
-                <span class="school school-room">Salle :</span> <span id="class-room"></span>
+                    <span class="school school-grade">Classe :</span> <span id="class-grade"></span>&nbsp;
+                    <span class="school school-room">Salle :</span> <span id="class-room"></span>
                 </p>
-                <p><span class="school school-series">Série :</span> <span id="class-series"></span></p>
-                <p><span class="school school-year">Année scolaire :</span> <span id="school-year"></span></p>
+                <p>
+                    <span class="school school-series">Série :</span> <span id="class-series"></span>&nbsp;
+                    <span class="school school-places">Centre :</span> <span id="class-places"></span>
+                </p>
+                <p>
+                    <span class="school school-year">Année scolaire :</span> <span id="school-year"></span>
+                </p>
             </div>
         </div>
 

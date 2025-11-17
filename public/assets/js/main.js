@@ -238,6 +238,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
 
 		case "/gsc/backend/Views/pages/schedules/timetable/generate-timetable.php":
 			userDropdownMenu();
+			selectPlace();
 			selectLevel();
 			selectSerie();
 			selectRoom();

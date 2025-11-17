@@ -16,6 +16,11 @@
             <form class="form__body" id="generate-timetable-form" method="POST">
 
                 <div class="form__group">
+					<label for="place_id" class="group__label">Classe :</label>
+					<select name="place_id" id="place_id" class="group__input" required></select>
+				</div>
+
+                <div class="form__group">
 					<label for="level_id" class="group__label">Classe :</label>
 					<select name="level_id" id="level_id" class="group__input" required></select>
 				</div>
@@ -29,9 +34,6 @@
 					<label for="room_id" class="group__label">Salle :</label>
 					<select name="room_id" id="room_id" class="group__input" required></select>
 				</div>
-
-                <!-- Visualisation de l'emploi du temps dynamique avant la génération -->
-                <div id="timetable-preview" style="margin-top: 30px;"></div>
 
                 <div class="form__group">
                     <button type="submit" name="generate" class="group__button">Générer le PDF</button>

@@ -19,9 +19,11 @@
         <ul class="header-wks__menu--center menu-center">
             <li class="menu-center__menu-center-item menu-center-item">
                 <?php 
+                    $classe = $_SESSION['role_name'] === "Enseignant" ? " | Classe : " . $_SESSION['level_name'] : "";
+
                     if($_SESSION['role_name'] !== "Super admin") { 
-                        echo "Centre : ".$_SESSION['place_name'] . ' | ' . 'Année : ' . $_SESSION['year_name'] . ' | ' . 'Cycle : ' . $_SESSION['cycle_name'];
-                    }else{ 
+                        echo "Centre : " . $_SESSION['place_name'] . ' | ' . 'Année : ' . $_SESSION['year_name'] . ' | ' . 'Cycle : ' . $_SESSION['cycle_name'] . $classe;
+                    } else {
                         echo "GSC - Accès Facile à l'Éducation";
                     } 
                 ?>

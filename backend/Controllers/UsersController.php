@@ -686,31 +686,34 @@ class UsersController
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function selectPlacesByTeacherSchedules (): array
+    public function selectPlacesByTeacherSchedules(): array
     {
         $db = $this->Database();
 
-        $sql = "SELECT 
-                        u.user_id,
-                        r.role_name,
-                        p.place_name,
-                        y.year_name,
-                        y.year_id,
-                        c.cycle_id,
-                        c.cycle_name,
-                        le.level_name
-                    FROM users u
-                    INNER JOIN roles r ON u.role_id = r.role_id
-                    INNER JOIN teachers t ON u.user_id = t.user_id
-                    INNER JOIN schedules sh ON t.teacher_id = sh.teacher_id
-                    INNER JOIN places p ON sh.place_id = p.place_id
-                    INNER JOIN years y ON sh.year_id = y.year_id
-                    INNER JOIN cycles c ON sh.cycle_id = c.cycle_id
-                    INNER JOIN levels le ON sh.level_id = le.level_id
-                    WHERE u.user_id = " . $_SESSION['user_id'];
+        $sql = "SELECT DISTINCT
+                    u.user_id,
+                    u.user_firstname,
+                    u.user_lastname,
+                    r.role_name,
+                    p.place_name,
+                    p.place_id,
+                    y.year_name,
+                    y.year_id,
+                    c.cycle_id,
+                    c.cycle_name,
+                    le.level_name
+                FROM users u
+                INNER JOIN roles r ON u.role_id = r.role_id
+                INNER JOIN teachers t ON u.user_id = t.user_id
+                LEFT JOIN schedules sh ON t.teacher_id = sh.teacher_id
+                LEFT JOIN places p ON sh.place_id = p.place_id
+                LEFT JOIN years y ON sh.year_id = y.year_id
+                LEFT JOIN cycles c ON sh.cycle_id = c.cycle_id
+                LEFT JOIN levels le ON sh.level_id = le.level_id
+                WHERE u.user_id = :user_id";
 
         $query = $db->prepare($sql);
-        $query->execute();
+        $query->execute([':user_id' => $_SESSION['user_id']]);
 
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
