@@ -20,6 +20,8 @@
 					<tr class="list__row">
 						<th class="list__row-item">N°</th>
 						<th class="list__row-item">Matières</th>
+						<th class="list__row-item">Cœfficient</th>
+						<th class="list__row-item">Classe</th>
 						<th class="list__row-item">Date.Ajout</th>
 						<th class="list__row-item" colspan="2">Action</th>
 					</tr>

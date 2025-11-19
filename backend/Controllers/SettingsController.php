@@ -370,10 +370,12 @@ class SettingsController
     {
         try {
             $db = $this->Database();
-            $sql = "INSERT INTO courses (course_name) VALUES (:course_name)";
+            $sql = "INSERT INTO courses (course_name, course_coef, level_id) VALUES (:course_name, :course_coef, :level_id)";
             $query = $db->prepare($sql);
             $query->execute([
-                'course_name' => $data['course_name'] ?? ''
+                'course_name' => $data['course_name'] ?? '',
+                'course_coef' => $data['course_coef'] ?? '',
+                'level_id' => $data['level_id'] ?? ''
             ]);
             return ["success" => true, "message" => "Matière ajoutée avec succès !"];
         } catch (Exception $e) {
@@ -394,10 +396,12 @@ class SettingsController
     {
         try {
             $db = $this->Database();
-            $sql = "UPDATE courses SET course_name = :course_name WHERE course_id = :course_id";
+            $sql = "UPDATE courses SET course_name = :course_name, course_coef = :course_coef, level_id = :level_id WHERE course_id = :course_id";
             $query = $db->prepare($sql);
             $query->execute([
                 'course_name' => $data['course_name'],
+                'course_coef' => $data['course_coef'],
+                'level_id' => $data['level_id'],
                 'course_id' => $data['course_id']
             ]);
             return ["success" => true, "message" => "Matière modifiée avec succès !"];
@@ -424,7 +428,14 @@ class SettingsController
     public function selectAllCourses(): array
     {
         $db = $this->Database();
-        $sql = "SELECT * FROM courses";
+        $sql = "SELECT 
+                    c.course_id,
+                    c.course_name,
+                    c.course_coef,
+                    le.level_name,
+                    c.course_date_add
+                FROM courses c
+                LEFT JOIN levels le ON c.level_id = le.level_id;";
         $query = $db->query($sql);
         return $query->fetchAll();
     }

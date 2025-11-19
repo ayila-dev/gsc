@@ -13,36 +13,48 @@
 				<h1 class="form__title">Générer les bulletins des notes</h1>
 			</div>
 
-			<form action="" class="form__body" id="studentForm" method="POST">
+			<form class="form__body" id="generate-report-card-form" method="POST">
 
 				<div class="form__group">
-					<label for="level" class="group__label">Classe : </label>
-					<select name="level" id="level" class="group__input">
-						<option value="Classe" disabled selected>Classe</option>
-						<option value="6ème">6ème</option>
-						<option value="5ème">5ème</option>
-						<option value="4ème">4ème</option>
-						<option value="3ème">3ème</option>
-						<option value="2nde">2nde</option>
-						<option value="1ère">1ère</option>
-						<option value="Tle">Tle</option>
+					<label for="place_id" class="group__label">Centre :</label>
+					<select name="place_id" id="place_id" class="group__input" required></select>
+				</div>
+
+                <div class="form__group">
+					<label for="level_id" class="group__label">Classe :</label>
+					<select name="level_id" id="level_id" class="group__input" required></select>
+				</div>
+
+				<div class="form__group">
+					<label for="serie_id" class="group__label">Série :</label>
+					<select name="serie_id" id="serie_id" class="group__input" required></select>
+				</div>
+
+				<div class="form__group">
+					<label for="room_id" class="group__label">Salle :</label>
+					<select name="room_id" id="room_id" class="group__input" required></select>
+				</div>
+
+				<div class="form__group">
+					<label for="grade_period" class="group__label">Période d'évaluation :</label>
+					<select name="grade_period" id="grade_period" class="group__input" required>
+						<option value="" disabled selected>Période</option>
+
+						<optgroup label="Trimestre">
+							<option value="t1">Trimestre 1</option>
+							<option value="t2">Trimestre 2</option>
+							<option value="t3">Trimestre 3</option>
+						</optgroup>
+
+						<optgroup label="Semestre">
+							<option value="s1">Semestre 1</option>
+							<option value="s2">Semestre 2</option>
+						</optgroup>
 					</select>
 				</div>
 
 				<div class="form__group">
-					<label for="serie" class="group__label">Série : </label>
-					<select name="serie" id="serie" class="group__input">
-						<option value="Série" disabled selected>Série</option>
-						<option value="A">A</option>
-						<option value="B">B</option>
-						<option value="C">C</option>
-						<option value="D">D</option>
-						<option value="Néant">Néant</option>
-					</select>
-				</div>
-
-				<div class="form__group">
-					<button type="submit" name="signup" class="group__button">Génération</button>
+					<button type="submit" name="signup" class="group__button">Voir le PDF</button>
 				</div>
 
 			</form>

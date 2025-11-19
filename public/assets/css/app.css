@@ -271,6 +271,7 @@ main {
 	width: 100%;
 	padding: 2rem;
 	display: flex;
+	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
 }
@@ -287,16 +288,11 @@ main {
 	margin: 0.5rem 0;
 }
 
-.form__i {
-	width: 45%;
+.form__type_grade {
+	width: 100%;
 }
 
-.form__d {
-	width: 45%;
-}
-
-.form__i > .form__group,
-.form__d > .form__group {
+.form__type_grade > .form__group {
 	margin: 1rem 0rem;
 }
 
@@ -892,6 +888,7 @@ main {
 
 .exit {
 	color: white;
+	text-decoration: none;
 	background: #dc3545;
 	border: none;
 	border-radius: 6px;

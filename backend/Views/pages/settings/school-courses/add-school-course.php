@@ -24,6 +24,17 @@
 				</div>
 
 				<div class="form__group">
+					<label for="course_coef" class="group__label">Cœfficient : </label>
+					<input type="number" name="course_coef" placeholder="Cœfficient" id="course_coef"
+						class="group__input" required />
+				</div>
+
+				<div class="form__group">
+					<label for="level_id" class="group__label">Classe : </label>
+					<select name="level_id" id="level_id" class="group__input"></select>
+				</div>
+
+				<div class="form__group">
 					<button type="submit" name="add" class="group__button">Création</button>
 				</div>
 

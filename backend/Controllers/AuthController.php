@@ -228,35 +228,39 @@ class AuthController
           return $query->fetch();
      }
 
-     public function selectLevelTeacher ($year_id, $cycle_id, $place_id, $user_id) 
+     public function selectLevelTeacher($year_id, $cycle_id, $place_id, $user_id) 
      {
           $db = $this->Database();
 
           $query = $db->prepare("
-          SELECT 
-               levels.level_id,
-               levels.level_name,
-               series.serie_id,
-               series.serie_name,
-               rooms.room_id,
-               rooms.room_name
-          FROM schedules
-          JOIN teachers ON schedules.teacher_id = teachers.teacher_id
-          JOIN users ON teachers.user_id = users.user_id
-          JOIN levels ON schedules.level_id = levels.level_id
-          JOIN series ON schedules.serie_id = series.serie_id
-          JOIN rooms ON schedules.room_id = rooms.room_id
-          WHERE 
-               schedules.year_id = ?
-               AND schedules.cycle_id = ?
-               AND schedules.place_id = ?
-               AND users.user_id = ?
-          GROUP BY 
-               levels.level_id, series.serie_id, rooms.room_id
+               SELECT 
+                    levels.level_id,
+                    MAX(levels.level_name) AS level_name,
+                    series.serie_id,
+                    MAX(series.serie_name) AS serie_name,
+                    MAX(courses.course_id) AS course_id,
+                    MAX(courses.course_name) AS course_name,
+                    rooms.room_id,
+                    MAX(rooms.room_name) AS room_name
+               FROM schedules
+               JOIN teachers ON schedules.teacher_id = teachers.teacher_id
+               JOIN users ON teachers.user_id = users.user_id
+               JOIN levels ON schedules.level_id = levels.level_id
+               JOIN series ON schedules.serie_id = series.serie_id
+               JOIN courses ON schedules.course_id = courses.course_id
+               JOIN rooms ON schedules.room_id = rooms.room_id
+               WHERE 
+                    schedules.year_id = ?
+                    AND schedules.cycle_id = ?
+                    AND schedules.place_id = ?
+                    AND users.user_id = ?
+               GROUP BY 
+                    levels.level_id, series.serie_id, rooms.room_id
           ");
 
           $query->execute([$year_id, $cycle_id, $place_id, $user_id]);
-          $result = $query->fetchAll(PDO::FETCH_ASSOC);
+          $result = $query->fetch(PDO::FETCH_ASSOC);
           return $result;
      }
+
 }

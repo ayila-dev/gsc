@@ -12,15 +12,13 @@ if (isset($_POST['connect'])) {
 
             require_once __DIR__ . "/../../Controllers/AuthController.php";
             $auth = new AuthController();
-            $teacher = $auth->selectLevelTeacher($year_id, $cycle_id, $place_id, $user_id);
 
-            $_SESSION['level_name'] = $teacher['level_name'];
-            
             // Récupération des données
             $school_year = $auth->checkSchoolYearById($year_id);
             $school_cycle = $auth->checkSchoolCycleById($cycle_id);
             $school_place = $auth->checkSchoolPlaceById($place_id);
-            
+            $teacher = $auth->selectLevelTeacher($year_id, $cycle_id, $place_id, $_SESSION['user_id']);
+
             // Vérification que tout existe réellement
             if (!$school_year || !$school_cycle || !$school_place) {
                 $_SESSION['error'] = "Impossible de charger les informations scolaires.";
@@ -37,7 +35,19 @@ if (isset($_POST['connect'])) {
 
             $_SESSION['place_id']   = $place_id;
             $_SESSION['place_name'] = $school_place['place_name'];
+            
+            $_SESSION['level_id'] = $teacher['level_id'];
+            $_SESSION['level_name'] = $teacher['level_name'];
 
+            $_SESSION['serie_id'] = $teacher['serie_id'];
+            $_SESSION['serie_name'] = $teacher['serie_name'];
+
+            $_SESSION['room_id'] = $teacher['room_id'];
+            $_SESSION['room_name'] = $teacher['room_name'];
+
+            $_SESSION['course_id'] = $teacher['course_id'];
+            $_SESSION['course_name'] = $teacher['course_name'];
+            
             // Redirection
             header("Location: dashboard.php");
             exit();

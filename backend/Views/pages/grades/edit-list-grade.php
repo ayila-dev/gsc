@@ -12,29 +12,6 @@
 		<div class="form-filter-container">
 
 			<form action="" class="form__body">
-
-				<div class="form__group">
-					<label for="school-grade" class="group__label">Classe : </label>
-					<select name="school-grade" id="school-grade" class="group__input">
-						<option value="Classe" disabled selected>Classe</option>
-						<option value="6ème">6ème</option>
-						<option value="5ème">5ème</option>
-						<option value="4ème">4ème</option>
-						<option value="3ème">3ème</option>
-					</select>
-				</div>
-
-				<div class="form__group">
-					<label for="serie" class="group__label">Série : </label>
-					<select name="serie" id="serie" class="group__input">
-						<option value="Série" disabled selected>Série</option>
-						<option value="A">A</option>
-						<option value="B">B</option>
-						<option value="C">C</option>
-						<option value="D">D</option>
-					</select>
-				</div>
-
 				<div class="form__group">
 					<label for="matricule" class="group__label">Numéro matricule : </label>
 					<input type="matricule" name="matricule" placeholder="Matricule" id="matricule"
@@ -67,6 +44,7 @@
 						<th class="list__row-item">Classe</th>
 						<th class="list__row-item">Série</th>
 						<th class="list__row-item">Matière</th>
+						<th class="list__row-item">Période</th>
 						<th class="list__row-item">I1</th>
 						<th class="list__row-item">I2</th>
 						<th class="list__row-item">I3</th>
@@ -78,68 +56,9 @@
 						<th class="list__row-item" colspan="2">Action</th>
 					</tr>
 				</thead>
-				<tbody class="list__body">
-					<tr class="list__row">
-						<td class="list__row-item">1</td>
-						<td class="list__row-item">EDCGSC0001</td>
-						<td class="list__row-item">BOURAIMA</td>
-						<td class="list__row-item">Mouksite</td>
-						<td class="list__row-item">2nde</td>
-						<td class="list__row-item">D</td>
-						<td class="list__row-item">Maths</td>
-						<td class="list__row-item">10</td>
-						<td class="list__row-item">12.5</td>
-						<td class="list__row-item">08</td>
-						<td class="list__row-item">10.33</td>
-						<td class="list__row-item">10</td>
-						<td class="list__row-item">10</td>
-						<td class="list__row-item">10.11</td>
-						<td class="list__row-item">30.33</td>
-						<td class="list__row-item">
-							<button type="button" class="edit-grade">Éditer</button>
-						</td>
-					</tr>
-					<tr class="list__row">
-						<td class="list__row-item">2</td>
-						<td class="list__row-item">EDCGSC0002</td>
-						<td class="list__row-item">AKIOLE</td>
-						<td class="list__row-item">Chancelle</td>
-						<td class="list__row-item">2nde</td>
-						<td class="list__row-item">D</td>
-						<td class="list__row-item">Maths</td>
-						<td class="list__row-item">10</td>
-						<td class="list__row-item">12.5</td>
-						<td class="list__row-item">08</td>
-						<td class="list__row-item">10.33</td>
-						<td class="list__row-item">10</td>
-						<td class="list__row-item">10</td>
-						<td class="list__row-item">10.11</td>
-						<td class="list__row-item">30.33</td>
-						<td class="list__row-item">
-							<button type="button" class="edit-grade">Éditer</button>
-						</td>
-					</tr>
-					<tr class="list__row">
-						<td class="list__row-item">3</td>
-						<td class="list__row-item">EDCGSC0003</td>
-						<td class="list__row-item">DOSSOU</td>
-						<td class="list__row-item">Rolande</td>
-						<td class="list__row-item">2nde</td>
-						<td class="list__row-item">D</td>
-						<td class="list__row-item">Maths</td>
-						<td class="list__row-item">10</td>
-						<td class="list__row-item">12.5</td>
-						<td class="list__row-item">08</td>
-						<td class="list__row-item">10.33</td>
-						<td class="list__row-item">10</td>
-						<td class="list__row-item">10</td>
-						<td class="list__row-item">10.11</td>
-						<td class="list__row-item">30.33</td>
-						<td class="list__row-item">
-							<button type="button" class="edit-grade">Éditer</button>
-						</td>
-					</tr>
-				</tbody>
+
+				<tbody class="list__body"></tbody>
+				
 				<tfoot class="list__footer">
 					<tr class="list__row">
 						<th class="list__row-item">Total</th>

@@ -656,12 +656,14 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 					const placeName = value.place_name || "Non attribué";
 					const yearName = value.year_name || "Non défini";
 					const levelName = value.level_name || "Non défini";
+					const courseName = value.course_name || "Non défini";
 
 					session.innerHTML = `
                 <form action="checkSchool.php" class="school-session" method="POST" id="school-session-form">
                     <h2 class="form__title">${placeName} | ${yearName}</h2>
                     <h3 class="form__title">Cycle : ${cycleName}</h3>
                     <h3 class="form__title">Classe : ${levelName}</h3>
+                    <h3 class="form__title">Cours : ${courseName}</h3>
 
                     <input type="hidden" name="year_id" value="${
 						value.year_id || ""
@@ -1930,6 +1932,440 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 
 			break;
 		}
+
+		// =============================
+		// SETTINGS MANAGER – GRADES
+		// =============================
+		case "add-grade": {
+			const form = document.getElementById("add-grade-form");
+			if (!form) return;
+
+			form.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const formData = new FormData(form);
+
+				try {
+					const result = await GSC.API.grades.add(formData);
+					// Check if result is successful
+					if (result.success) {
+						let popupContent =
+							result.message ||
+							"Les notes sont ajoutées avec succès.";
+						showPopup("success", popupContent, false);
+						form.reset();
+						setTimeout(() => {
+							window.location.href =
+								"/gsc/backend/Views/pages/grades/edit-list-grade.php";
+						}, 3000);
+					} else {
+						showPopup(
+							"danger",
+							result.message ||
+								"Erreur lors de l’ajout des notes."
+						);
+					}
+				} catch (err) {
+					console.error("Erreur du serveur");
+					showPopup("danger", "Erreur réseau.");
+				}
+			});
+
+			// List add
+			const tbody = document.querySelector(".list__body");
+			if (!tbody) return;
+
+			try {
+				// load via API
+				const addList = await GSC.API.grades.listAdd();
+
+				if (!addList || addList.length === 0) {
+					tbody.innerHTML += `<tr><td colspan="14" class="list__row-item">Aucun apprenant trouvé</td></tr>`;
+
+					// Update footer count
+					const totalCell = document.querySelector(
+						".list__footer .list__row-item[colspan]"
+					);
+					if (totalCell) totalCell.textContent = "0 note enregistrée";
+					return;
+				}
+
+				tbody.innerHTML = "";
+				let i = 1;
+
+				addList.forEach((value, index) => {
+					const tr = document.createElement("tr");
+					tr.classList.add("list__row");
+					tr.innerHTML = `
+						<td class="list__row-item">${value.student_matricule}</td>
+						<td class="list__row-item">${value.user_lastname}</td>
+						<td class="list__row-item">${value.user_firstname}</td>
+						<td class="list__row-item">
+							<input type="number" step="0.01" min="0" max="20" name="grade${i++}" placeholder="Note sur 20" class="group__input"
+									required />
+						</td>
+					`;
+					tbody.appendChild(tr);
+				});
+
+				const btnRow = document.createElement("tr");
+				btnRow.innerHTML = `
+					<td class="list__row-item" colspan="13">
+						<button type="submit" name="add" class="group__button">Ajouter toutes les notes</button>
+					</td>
+				`;
+				tbody.append(btnRow);
+
+				// Update footer count
+				const totalCell = document.querySelector(
+					".list__footer .list__row-item[colspan]"
+				);
+				if (totalCell) {
+					const total = addList.length;
+					totalCell.textContent =
+						total +
+						(total > 1
+							? " notes enregistrées"
+							: " note enregistrée");
+				}
+			} catch (err) {
+				console.error(err);
+				showPopup(
+					"danger",
+					"Impossible de charger la liste des apprenants."
+				);
+			}
+			break;
+		}
+
+		// List grade
+		case "edit-list-grade": {
+			const tbody = document.querySelector(".list__body");
+			if (!tbody) return;
+
+			try {
+				// load via API
+				const grades = await GSC.API.grades.list();
+
+				if (!grades || grades.length === 0) {
+					tbody.innerHTML = `<tr><td colspan="14" class="list__row-item">Aucun apprenant trouvé</td></tr>`;
+
+					// Update footer count
+					const totalCell = document.querySelector(
+						".list__footer .list__row-item[colspan]"
+					);
+					if (totalCell) totalCell.textContent = "0 note enregistrée";
+					return;
+				}
+
+				tbody.innerHTML = "";
+				let i = 1;
+
+				grades.forEach((value, index) => {
+					const tr = document.createElement("tr");
+					tr.classList.add("list__row");
+
+					// Fonction pour gérer les null et arrondir à 2 décimales
+					const formatGrade = (grade) =>
+						grade == null ? 0.0 : parseFloat(grade).toFixed(2);
+
+					// Interrogations
+					let I1 = formatGrade(value.grade_first_interro);
+					let I2 = formatGrade(value.grade_second_interro);
+					let I3 = formatGrade(value.grade_third_interro);
+
+					// Moyenne des Interrogations
+					let MI = (
+						(parseFloat(I1) + parseFloat(I2) + parseFloat(I3)) /
+						3
+					).toFixed(2);
+
+					// Devoirs
+					let D1 = formatGrade(value.grade_first_duty);
+					let D2 = formatGrade(value.grade_second_duty);
+
+					// Moyenne Générale
+					let MG = (
+						(parseFloat(MI) + parseFloat(D1) + parseFloat(D2)) /
+						3
+					).toFixed(2);
+
+					// Moyenne Coefficiée
+					let MC = (MG * value.course_coef).toFixed(2);
+
+					tr.innerHTML = `
+						<td class="list__row-item">${index + 1}</td>
+						<td class="list__row-item">${value.student_matricule}</td>
+						<td class="list__row-item">${value.user_lastname}</td>
+						<td class="list__row-item">${value.user_firstname}</td>
+						<td class="list__row-item">${value.level_name}</td>
+						<td class="list__row-item">${value.serie_name}</td>
+						<td class="list__row-item">${value.course_name}</td>
+						<td class="list__row-item">${value.grade_period}</td>
+						<td class="list__row-item">${I1}</td>
+						<td class="list__row-item">${I2}</td>
+						<td class="list__row-item">${I3}</td>
+						<td class="list__row-item">${MI}</td>
+						<td class="list__row-item">${D1}</td>
+						<td class="list__row-item">${D2}</td>
+						<td class="list__row-item">${MG}</td>
+						<td class="list__row-item">${MC}</td>
+						<td class="list__row-item">
+							<button type="button" class="edit-grade">Éditer</button>
+						</td>
+					`;
+					tr.dataset.courseCoef = value.course_coef;
+					tbody.appendChild(tr);
+				});
+
+				if (typeof gradeEditor === "function") {
+					gradeEditor();
+				}
+
+				// Update footer count
+				const totalCell = document.querySelector(
+					".list__footer .list__row-item[colspan]"
+				);
+				if (totalCell) {
+					const total = grades.length;
+					totalCell.textContent =
+						total +
+						(total > 1
+							? " notes enregistrées"
+							: " note enregistrée");
+				}
+			} catch (err) {
+				console.error(err);
+				showPopup(
+					"danger",
+					"Impossible de charger la liste des notes des apprenants."
+				);
+			}
+			break;
+		}
+
+		case "report-card": {
+			const page = document.body.dataset.page;
+
+			if (page === "report-card") {
+				const level_id = document.body.dataset.levelId;
+				const serie_id = document.body.dataset.serieId;
+				const room_id = document.body.dataset.roomId;
+				const place_id = document.body.dataset.placeId;
+				const period = document.body.dataset.period;
+
+				try {
+					const formData = new FormData();
+					formData.append("level_id", level_id);
+					formData.append("serie_id", serie_id);
+					formData.append("room_id", room_id);
+					formData.append("place_id", place_id);
+					formData.append("grade_period", period);
+
+					const result = await GSC.API.grades.generateReportCardPDF(
+						formData
+					);
+
+					if (
+						!result.success ||
+						!result.data ||
+						result.data.length === 0
+					) {
+						showPopup(
+							"warning",
+							"Aucune note trouvée pour ces paramètres."
+						);
+						return;
+					}
+
+					showPopup("success", "Bulletin chargé avec succès !");
+					const grades = result.data;
+
+					// --------------------------------------
+					// 1. REMPLIR LE HEADER
+					// --------------------------------------
+					const headerRows = document.querySelectorAll(
+						".report-card__header .report-card__row"
+					);
+
+					headerRows[0].children[1].textContent =
+						grades[0].student_matricule ?? "...";
+					headerRows[0].children[3].textContent =
+						grades[0].year_name ?? "...";
+
+					headerRows[1].children[1].textContent = `${grades[0].user_lastname} ${grades[0].user_firstname}`;
+					headerRows[1].children[3].textContent = `${grades[0].level_name} ${grades[0].serie_name} ${grades[0].room_name}`;
+
+					headerRows[2].children[1].textContent =
+						grades[0].user_birth_date ?? "...";
+					headerRows[2].children[3].textContent =
+						grades[0].grade_period ?? "...";
+
+					headerRows[3].children[1].textContent =
+						grades[0].total_students ?? "...";
+					headerRows[3].children[3].textContent =
+						grades[0].user_sex ?? "...";
+
+					// --------------------------------------
+					// 2. REMPLIR LES MATIÈRES (AUTO)
+					// --------------------------------------
+					const tableBody =
+						document.querySelector(".report-card__body");
+
+					// Supprime toutes les lignes sauf l’entête
+					tableBody
+						.querySelectorAll("tr:not(:first-child)")
+						.forEach((tr) => tr.remove());
+
+					grades.forEach((grade) => {
+						const row = document.createElement("tr");
+						row.classList.add("report-card__row");
+
+						const I1 = Number(grade.grade_first_interro ?? 0);
+						const I2 = Number(grade.grade_second_interro ?? 0);
+						const I3 = Number(grade.grade_third_interro ?? 0);
+						const D1 = Number(grade.grade_first_duty ?? 0);
+						const D2 = Number(grade.grade_second_duty ?? 0);
+
+						const MI = ((I1 + I2 + I3) / 3).toFixed(2);
+						const MG = ((Number(MI) + D1 + D2) / 3).toFixed(2);
+						const MC = (MG * grade.course_coef).toFixed(2);
+
+						row.innerHTML = `
+							<td class="report-card__col">${grade.course_name}</td>
+							<td class="report-card__col">${grade.course_coef}</td>
+							<td class="report-card__col">${I1.toFixed(2)}</td>
+							<td class="report-card__col">${I2.toFixed(2)}</td>
+							<td class="report-card__col">${I3.toFixed(2)}</td>
+							<td class="report-card__col">${MI}</td>
+							<td class="report-card__col">${D1.toFixed(2)}</td>
+							<td class="report-card__col">${D2.toFixed(2)}</td>
+							<td class="report-card__col">${MG}</td>
+							<td class="report-card__col">${MC}</td>
+							<td class="report-card__col">${grade.rank ?? ""}</td>
+							<td class="report-card__col">${grade.appreciation ?? ""}</td>
+						`;
+
+						tableBody.appendChild(row);
+					});
+
+					// --------------------------------------
+					// 3. REMPLIR LE FOOTER DES MOYENNES
+					// --------------------------------------
+					document.getElementById(
+						"moy-sem1"
+					).textContent = `Moyenne : ${
+						grades[0].semester1_avg ?? "..."
+					}`;
+
+					document.getElementById(
+						"rang-sem1"
+					).textContent = `Rang : ${
+						grades[0].semester1_rank ?? "..."
+					}`;
+
+					document.getElementById(
+						"moy-sem2"
+					).textContent = `Moyenne : ${
+						grades[0].semester2_avg ?? "..."
+					}`;
+
+					document.getElementById(
+						"rang-sem2"
+					).textContent = `Rang : ${
+						grades[0].semester2_rank ?? "..."
+					}`;
+
+					document.getElementById(
+						"moy"
+					).textContent = `Moyenne Annuelle : ${
+						grades[0].annual_avg ?? "..."
+					}`;
+
+					document.getElementById(
+						"rang"
+					).textContent = `Rang Annuel : ${
+						grades[0].annual_rank ?? "..."
+					}`;
+				} catch (error) {
+					console.error(error);
+					showPopup(
+						"danger",
+						"Erreur lors du chargement du bulletin."
+					);
+				}
+			}
+			break;
+		}
+
+		/* try {
+				// Supposons que tu as une fonction GSC.API.grades.listByStudent(studentId, period)
+				const grades = await GSC.API.grades.generateReportCardPDF(
+					formData
+				);
+
+				if (!grades || grades.length === 0) {
+					console.warn("Aucune note trouvée pour cet étudiant.");
+					return;
+				}
+
+				const rows = document.querySelectorAll(
+					".report-card__body .report-card__row"
+				);
+
+				grades.forEach((grade, index) => {
+					const row = rows[index]; // correspond à la matière
+					if (!row) return;
+
+					// Remplacer les valeurs null par 0.00
+					const I1 = grade.grade_first_interro ?? 0;
+					const I2 = grade.grade_second_interro ?? 0;
+					const I3 = grade.grade_third_interro ?? 0;
+					const D1 = grade.grade_first_duty ?? 0;
+					const D2 = grade.grade_second_duty ?? 0;
+
+					const MI = ((I1 + I2 + I3) / 3).toFixed(2);
+					const MG = ((parseFloat(MI) + D1 + D2) / 3).toFixed(2);
+					const MC = (MG * grade.course_coef).toFixed(2);
+
+					const cells = row.querySelectorAll(".report-card__col");
+
+					cells[1].textContent = grade.course_coef; // COEF
+					cells[2].textContent = I1.toFixed(2); // INT 1
+					cells[3].textContent = I2.toFixed(2); // INT 2
+					cells[4].textContent = I3.toFixed(2); // INT 3
+					cells[5].textContent = MI; // Moy INT
+					cells[6].textContent = D1.toFixed(2); // DEV 1
+					cells[7].textContent = D2.toFixed(2); // DEV 2
+					cells[8].textContent = MG; // Moy Matière
+					cells[9].textContent = MC; // Moy Coef
+					// Rang et Appréciation peuvent être calculés ou remplis après
+				});
+
+				// Remplir le header du bulletin
+				document.querySelector(
+					".report-card__header .report-card__col:nth-child(2)"
+				).textContent = grades[0].student_matricule ?? "...";
+
+				document.querySelector(
+					".report-card__header .report-card__col:nth-child(4)"
+				).textContent = grades[0].school_year ?? "...";
+
+				document.querySelector(
+					".report-card__header .report-card__col:nth-child(6)"
+				).textContent = grades[0].level_name ?? "...";
+
+				document.querySelector(
+					".report-card__header .report-card__col:nth-child(8)"
+				).textContent = grades[0].semester ?? "...";
+
+				document.querySelector(
+					".report-card__header .report-card__col:nth-child(10)"
+				).textContent = grades[0].total_students ?? "...";
+			} catch (err) {
+				console.error("Erreur lors du remplissage du bulletin :", err);
+			}
+			break;
+		} */
 
 		// =============================
 		// SETTINGS MANAGER – YEARS
@@ -3447,6 +3883,8 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 					tr.innerHTML = `
 						<td class="list__row-item">${i++}</td>
 						<td class="list__row-item">${value.course_name}</td>
+						<td class="list__row-item">${value.course_coef}</td>
+						<td class="list__row-item">${value.level_name}</td>
 						<td class="list__row-item">${value.course_date_add}</td>
 						<td class="list__row-item">
 							<a href="edit-school-course.php?id=${
@@ -3541,6 +3979,25 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 				break;
 			}
 
+			// load levels
+			let levels = [];
+			try {
+				const resLevels = await fetch(
+					"/gsc/backend/Models/SelectLevel.php"
+				);
+				levels = await resLevels.json();
+				const selectLevel = form.querySelector("[name='level_id']");
+				selectLevel.innerHTML = "<option disabled>Classe</option>";
+				levels.forEach((level) => {
+					const opt = document.createElement("option");
+					opt.value = level.level_id;
+					opt.textContent = level.level_name;
+					selectLevel.appendChild(opt);
+				});
+			} catch (e) {
+				showPopup("danger", "Erreur lors du chargement des classes.");
+			}
+
 			try {
 				const res = await GSC.API.settings.courses.get(id);
 				if (!res || !res.course_id) {
@@ -3550,6 +4007,9 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 				document.getElementById("course_id").value = res.course_id;
 				form.querySelector("[name='course_name']").value =
 					res.course_name;
+				form.querySelector("[name='course_coef']").value =
+					res.course_coef;
+				form.querySelector("[name='level_id']").value = res.level_id;
 			} catch (e) {
 				console.error(e);
 				showPopup(

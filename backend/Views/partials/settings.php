@@ -2,10 +2,15 @@
     <div class="header-wks" id="header-wks-box">
         <ul class="header-wks__menu--left menu-left" id="menu-left">
             <li class="menu-left__menu-left-item menu-left-item" id="user-item">
-                MB
+                <?php 
+                    require_once __DIR__ . "/../../Controllers/UsersController.php";
+                    echo htmlspecialchars((new UsersController())->initials($_SESSION['user_lastname'], $_SESSION['user_firstname']), ENT_QUOTES, 'UTF-8'); 
+                ?>
             </li>
             <li class="menu-left__menu-left-item menu-left-item user-dropdown-parent" id="user-email">
-                <?php echo $_SESSION['user_firstname'] . ' ' . $_SESSION['user_lastname'] . ' | ' . $_SESSION['role_name']; ?>
+                <?php 
+                    echo $_SESSION['user_firstname'] . ' ' . $_SESSION['user_lastname'] . ' | ' . $_SESSION['role_name']; 
+                ?>
             </li>
         </ul>
 
@@ -19,10 +24,10 @@
         <ul class="header-wks__menu--center menu-center">
             <li class="menu-center__menu-center-item menu-center-item">
                 <?php 
-                    $classe = $_SESSION['role_name'] === "Enseignant" ? " | Classe : " . $_SESSION['level_name'] : "";
+                    $classe = $_SESSION['role_name'] === "Enseignant" ? " | " . $_SESSION['level_name']. " " . $_SESSION['room_name'] . " | " . $_SESSION['course_name']. ' <a href="/gsc/backend/Views/pages/place.php" class="exit"> Classes</a>' : "";
 
                     if($_SESSION['role_name'] !== "Super admin") { 
-                        echo "Centre : " . $_SESSION['place_name'] . ' | ' . 'Année : ' . $_SESSION['year_name'] . ' | ' . 'Cycle : ' . $_SESSION['cycle_name'] . $classe;
+                        echo $_SESSION['place_name'] . ' | ' . $_SESSION['year_name'] . ' | ' . $_SESSION['cycle_name'] . $classe;
                     } else {
                         echo "GSC - Accès Facile à l'Éducation";
                     } 

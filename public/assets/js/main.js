@@ -1,5 +1,6 @@
 import { showCustomFieldAmount } from "./lib.js";
 import { gradeEditor } from "./lib.js";
+import { gradesInput } from "./lib.js";
 import { userDropdownMenu } from "./lib.js";
 import { logoutUser } from "./lib.js";
 import { selectUserRole } from "./lib.js";
@@ -269,29 +270,32 @@ document.addEventListener("DOMContentLoaded", (e) => {
 		/**
 		 * Pages of grades
 		 */
-		case "/gsc/backend/Views/pages/grades/order-grade.php":
-			userDropdownMenu();
-			logoutUser();
-			console.log("Page de demande d'ajout des notes");
-			break;
-
 		case "/gsc/backend/Views/pages/grades/edit-list-grade.php":
 			userDropdownMenu();
-			logoutUser();
 			gradeEditor();
+			logoutUser();
 			console.log("Page d'édition et d'affichage des notes");
 			break;
 
 		case "/gsc/backend/Views/pages/grades/add-grade.php":
 			userDropdownMenu();
+			gradesInput();
 			logoutUser();
 			console.log("Page d'ajout des notes");
 			break;
 
 		case "/gsc/backend/Views/pages/grades/report-card/generate-report-card.php":
 			userDropdownMenu();
+			selectPlace();
+			selectSerie();
+			selectLevel();
+			selectRoom();
 			logoutUser();
 			console.log("Page de génération des bulletins des notes");
+			break;
+
+		case "/gsc/backend/Views/pages/grades/report-card/report-card.php":
+			console.log("Bulletin des notes");
 			break;
 
 		/**
@@ -435,6 +439,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
 		 */
 		case "/gsc/backend/Views/pages/settings/school-courses/add-school-course.php":
 			userDropdownMenu();
+			selectLevel();
 			logoutUser();
 			console.log("Page d'ajout d'une matière");
 			break;

@@ -112,7 +112,7 @@ export function toggleContainerOnOptionText(
 	selectElement.addEventListener("change", updateDisplay);
 }
 
-export const gradeEditor = () => {
+/* export const gradeEditor = () => {
 	// Éditeur de notes
 	// Sélectionner tous les boutons "Éditer"
 	// et ajouter un gestionnaire d'événement
@@ -215,6 +215,182 @@ export const gradeEditor = () => {
 				gradeEditor();
 			});
 		});
+	});
+}; */
+
+export const gradeEditor = () => {
+	const tbody = document.querySelector(".list__body");
+	if (!tbody) return;
+
+	// Délégation d'événements : un seul listener pour tout le tbody
+	tbody.removeEventListener("click", tbody._gradeEditorHandler); // safe remove si déjà attaché
+	tbody._gradeEditorHandler = function (e) {
+		const btn = e.target.closest("button");
+		if (!btn || !tbody.contains(btn)) return;
+
+		const row = btn.closest("tr");
+		if (!row) return;
+
+		// indices (0-based)
+		const idxI1 = 8,
+			idxI2 = 9,
+			idxI3 = 10,
+			idxMI = 11;
+		const idxD1 = 12,
+			idxD2 = 13,
+			idxMG = 14,
+			idxMC = 15;
+		const noteIndices = [idxI1, idxI2, idxI3, idxD1, idxD2];
+
+		// helper: get cell safely
+		const getCell = (i) => (row.children[i] ? row.children[i] : null);
+
+		// EDIT mode
+		if (btn.classList.contains("edit-grade")) {
+			// create or find error message
+			const actionCell = btn.closest("td") || row.lastElementChild;
+			let errorMsg = actionCell.querySelector(".error-msg");
+			if (!errorMsg) {
+				errorMsg = document.createElement("div");
+				errorMsg.className = "error-msg";
+				errorMsg.style.color = "red";
+				errorMsg.style.fontSize = "13px";
+				errorMsg.style.marginTop = "5px";
+				errorMsg.style.display = "none";
+				actionCell.appendChild(errorMsg);
+			}
+
+			// remplace les cellules par des inputs
+			noteIndices.forEach((ci) => {
+				const cell = getCell(ci);
+				if (!cell) return;
+				const val = (cell.textContent || "").trim();
+				cell.innerHTML = `<input type="number" min="0" max="20" step="0.01" 
+          value="${val.replace(",", ".")}" style="width:60px;">`;
+			});
+
+			btn.textContent = "Enregistrer";
+			btn.classList.remove("edit-grade");
+			btn.classList.add("save-grade");
+
+			// focus premier input
+			const firstInput = getCell(idxI1)?.querySelector("input");
+			if (firstInput) firstInput.focus();
+
+			return;
+		}
+
+		// SAVE mode
+		if (btn.classList.contains("save-grade")) {
+			// collect inputs and validate
+			const inputs = noteIndices
+				.map((ci) => getCell(ci)?.querySelector("input"))
+				.filter(Boolean);
+
+			let valid = true;
+			inputs.forEach((input) => {
+				const v = parseFloat(String(input.value).replace(",", "."));
+				if (Number.isNaN(v) || v < 0 || v > 20) {
+					input.style.border = "1px solid red";
+					valid = false;
+				} else {
+					input.style.border = "";
+				}
+			});
+
+			const actionCell = btn.closest("td") || row.lastElementChild;
+			let errorMsg = actionCell.querySelector(".error-msg");
+			if (!errorMsg) {
+				errorMsg = document.createElement("div");
+				errorMsg.className = "error-msg";
+				errorMsg.style.color = "red";
+				errorMsg.style.fontSize = "13px";
+				errorMsg.style.marginTop = "5px";
+				errorMsg.style.display = "none";
+				actionCell.appendChild(errorMsg);
+			}
+
+			if (!valid) {
+				errorMsg.textContent =
+					"La note doit être comprise entre 0 et 20.";
+				errorMsg.style.display = "block";
+				return;
+			}
+
+			// replace inputs with formatted values (2 décimales)
+			inputs.forEach((input) => {
+				const value = parseFloat(String(input.value).replace(",", "."));
+				input.closest("td").textContent = value.toFixed(2);
+			});
+
+			// recalculer MI, MG, MC
+			const parseCellVal = (ci) => {
+				const c = getCell(ci);
+				if (!c) return 0;
+				const t = (c.textContent || "0").trim().replace(",", ".");
+				const n = parseFloat(t);
+				return Number.isNaN(n) ? 0 : n;
+			};
+
+			const I1 = parseCellVal(idxI1);
+			const I2 = parseCellVal(idxI2);
+			const I3 = parseCellVal(idxI3);
+			const D1 = parseCellVal(idxD1);
+			const D2 = parseCellVal(idxD2);
+
+			const MI = (I1 + I2 + I3) / 3;
+			const MG = (MI + D1 + D2) / 3;
+
+			// récupère coefficient depuis la colonne course_coef si tu l'affiches,
+			// sinon depuis dataset (ex: data-course-coef) ou depuis une API
+			// Ici je suppose que value.course_coef existait mais n'est pas en table.
+			// Si la colonne course_coef n'est pas disponible dans le DOM,
+			// tu peux stocker le coef dans un data-attribute sur la row (ex: data-coef)
+			let coef = 1;
+			if (row.dataset.courseCoef) {
+				coef = parseFloat(row.dataset.courseCoef) || 1;
+			} else {
+				// fallback : si tu as la case course_coef visible dans la row, adapte l'index
+				const coefCell = row.querySelector("[data-course-coef]");
+				if (coefCell)
+					coef =
+						parseFloat(coefCell.textContent.replace(",", ".")) || 1;
+			}
+
+			const MC = MG * coef;
+
+			// écrire MI, MG, MC formatés à 2 décimales
+			if (getCell(idxMI)) getCell(idxMI).textContent = MI.toFixed(2);
+			if (getCell(idxMG)) getCell(idxMG).textContent = MG.toFixed(2);
+			if (getCell(idxMC)) getCell(idxMC).textContent = MC.toFixed(2);
+
+			// retour en mode EDIT
+			btn.textContent = "Éditer";
+			btn.classList.remove("save-grade");
+			btn.classList.add("edit-grade");
+
+			// masquer erreur si présent
+			errorMsg.style.display = "none";
+
+			// Ici : optionnel -> envoi vers API pour sauvegarde en base
+			// tu peux récupérer l'ID de grade / student depuis des data-attributes
+			// ex: row.dataset.gradeId, row.dataset.studentId, etc.
+
+			return;
+		}
+	};
+
+	tbody.addEventListener("click", tbody._gradeEditorHandler);
+};
+
+export const gradesInput = () => {
+	document.querySelector(".list__body").addEventListener("input", (e) => {
+		if (e.target && e.target.type === "number") {
+			let value = parseFloat(e.target.value);
+			if (!isNaN(value)) {
+				e.target.value = value.toFixed(2);
+			}
+		}
 	});
 };
 

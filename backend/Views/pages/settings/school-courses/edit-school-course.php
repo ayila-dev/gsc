@@ -19,14 +19,25 @@
 
 				<div class="form__group">
 					<label for="course_id" class="group__label">Matière : </label>
-					<input type="hidden" name="course_id" placeholder="Matière" id="course_id"
-						class="group__input" required />
+					<input type="text" name="course_id" placeholder="Matière" id="course_id"
+						class="group__input field-hidden" required />
 				</div>
 
 				<div class="form__group">
 					<label for="course_name" class="group__label">Matière : </label>
 					<input type="text" name="course_name" placeholder="Matière" id="course_name"
 						class="group__input" required />
+				</div>
+
+				<div class="form__group">
+					<label for="course_coef" class="group__label">Cœfficient : </label>
+					<input type="number" name="course_coef" placeholder="Cœfficient" id="course_coef"
+						class="group__input" required />
+				</div>
+
+				<div class="form__group">
+					<label for="level_id" class="group__label">Classe : </label>
+					<select name="level_id" id="level_id" class="group__input"></select>
 				</div>
 
 				<div class="form__group">

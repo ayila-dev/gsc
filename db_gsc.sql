@@ -76,15 +76,18 @@ CREATE TABLE rooms (
 -- 9️⃣ Table series
 CREATE TABLE series (
     serie_id INT PRIMARY KEY AUTO_INCREMENT,
-    serie_name VARCHAR(2) NOT NULL UNIQUE,
+    serie_name VARCHAR(10) NOT NULL UNIQUE,
     serie_date_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- 🔟 Table courses
 CREATE TABLE courses (
     course_id INT PRIMARY KEY AUTO_INCREMENT,
-    course_name VARCHAR(30) NOT NULL UNIQUE,
-    course_date_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    level_id INT NOT NULL,
+    course_name VARCHAR(30) NOT NULL,
+    course_coef INT NOT NULL,
+    course_date_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (level_id) REFERENCES levels(level_id) ON DELETE CASCADE
 );
 
 -- 11️⃣ Table schoolings
@@ -239,11 +242,12 @@ CREATE TABLE grades (
     grade_id INT PRIMARY KEY AUTO_INCREMENT,
     course_id INT NOT NULL,
     student_id INT NOT NULL,
-    grade_first_interro DECIMAL(5,2) NOT NULL,
-    grade_second_interro DECIMAL(5,2) NOT NULL,
-    grade_third_interro DECIMAL(5,2) NOT NULL,
-    grade_first_duty DECIMAL(5,2) NOT NULL,
-    grade_second_duty DECIMAL(5,2) NOT NULL,
+    grade_period VARCHAR(10) NOT NULL,
+    grade_first_interro DECIMAL(5,2) NULL,
+    grade_second_interro DECIMAL(5,2) NULL,
+    grade_third_interro DECIMAL(5,2) NULL,
+    grade_first_duty DECIMAL(5,2) NULL,
+    grade_second_duty DECIMAL(5,2) NULL,
     grade_date_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE

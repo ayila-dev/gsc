@@ -8,71 +8,64 @@
 
 	<div class="main-panel">
 
-		<h1 class="grade__title">Demande d'ajout des notes</h1>
-
 		<div class="form-formalities">
 
-			<form action="" class="form__i">
+			<form action="" method="POST" class="form__type_grade">
 
-				<h1 class="form__title">Interrogations</h1>
+				<h1 class="form__title">Ajouter les notes d'évaluations</h1>
 
 				<div class="form__group">
-					<label for="school-grade" class="group__label">Classe : </label>
-					<select name="school-grade" id="school-grade" class="group__input">
-						<option value="Classe" disabled selected>Classe</option>
-						<option value="6ème">6ème</option>
-						<option value="5ème">5ème</option>
-						<option value="4ème">4ème</option>
-						<option value="3ème">3ème</option>
+					<label for="type_grade" class="group__label">Type d'évaluation :</label>
+					<select name="type_grade" id="type_grade" class="group__input" required>
+						<option value="" disabled selected>Choisir un type d'évaluation</option>
+
+						<optgroup label="Interrogations">
+							<option value="interro1">Interrogation 1</option>
+							<option value="interro2">Interrogation 2</option>
+							<option value="interro3">Interrogation 3</option>
+						</optgroup>
+
+						<optgroup label="Devoirs">
+							<option value="devoir1">Devoir 1</option>
+							<option value="devoir2">Devoir 2</option>
+						</optgroup>
 					</select>
 				</div>
 
 				<div class="form__group">
-					<label for="level-interrogation" class="group__label">Niveau : </label>
-					<select name="level-interrogation" id="level-interrogation" class="group__input">
-						<option value="Niveau" disabled selected>Niveau</option>
-						<option value="I1">I1</option>
-						<option value="I2">I2</option>
-						<option value="I3">I3</option>
-					</select>
-				</div>
-
-				<div class="form__group">
-					<button type="submit" name="signup" class="group__button">Édition</button>
+					<button type="submit" name="edit_grade" class="group__button">
+						Ajouter les notes
+					</button>
 				</div>
 
 			</form>
 
-			<form action="" class="form__d">
+		</div>
 
-				<h1 class="form__title">Devoirs</h1>
+		<h2 class="list__title">Liste des élèves</h2>
+		<div class="list-container">
+			<table class="list">
+				<thead class="list__header">
+					<tr class="list__row">
+						<th class="list__row-item">N°</th>
+						<th class="list__row-item">Matricule</th>
+						<th class="list__row-item">Nom</th>
+						<th class="list__row-item">Prénom(s)</th>
+						<th class="list__row-item">Notes</th>
+						<th class="list__row-item">Date.Ajout</th>
+						<th class="list__row-item" colspan="2">Action</th>
+					</tr>
+				</thead>
 
-				<div class="form__group">
-					<label for="school-grade" class="group__label">Classe : </label>
-					<select name="school-grade" id="school-grade" class="group__input">
-						<option value="Classe" disabled selected>Classe</option>
-						<option value="6ème">6ème</option>
-						<option value="5ème">5ème</option>
-						<option value="4ème">4ème</option>
-						<option value="3ème">3ème</option>
-					</select>
-				</div>
+				<tbody class="list__body"></tbody>
 
-				<div class="form__group">
-					<label for="level-duty" class="group__label">Niveau : </label>
-					<select name="level-duty" id="level-duty" class="group__input">
-						<option value="Niveau" disabled selected>Niveau</option>
-						<option value="I1">D1</option>
-						<option value="I2">D2</option>
-					</select>
-				</div>
-
-				<div class="form__group">
-					<button type="submit" name="signup" class="group__button">Édition</button>
-				</div>
-
-			</form>
-
+				<tfoot class="list__footer">
+					<tr class="list__row">
+						<th class="list__row-item">Total</th>
+						<th class="list__row-item" colspan="11"></th>
+					</tr>
+				</tfoot>
+			</table>
 		</div>
 	</div>
 

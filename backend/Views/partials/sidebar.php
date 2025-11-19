@@ -157,7 +157,7 @@
                     <nav class="navigation-item__subnavigation subnavigation">
                          <?php if (hasAccess('order-grade')): ?>
                               <a class="subnavigation__subnavigation-item subnavigation-item"
-                                   href="/gsc/backend/Views/pages/grades/order-grade.php">
+                                   href="/gsc/backend/Views/pages/grades/add-grade.php">
                                    Ajouter des notes
                               </a>
                          <?php endif; ?>
@@ -165,7 +165,7 @@
                          <?php if (hasAccess('edit-list-grade')): ?>
                               <a class="subnavigation__subnavigation-item subnavigation-item"
                                    href="/gsc/backend/Views/pages/grades/edit-list-grade.php">
-                                   Édition / Liste des notes
+                                   Liste des notes
                               </a>
                          <?php endif; ?>
 

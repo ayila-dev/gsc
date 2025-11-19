@@ -39,6 +39,14 @@ class UsersController
         return $user_password;
     }
 
+    public function initials(string $nom, string $prenom): string
+    {
+        $firstNom = strtoupper(substr($nom, 0, 1));
+        $firstPrenom = strtoupper(substr($prenom, 0, 1));
+        return $firstNom . $firstPrenom;
+    }
+
+
     public function getLastUserId()
     {
         $db = $this->Database();
@@ -701,7 +709,12 @@ class UsersController
                     y.year_id,
                     c.cycle_id,
                     c.cycle_name,
-                    le.level_name
+                    co.course_id,
+                    co.course_name,
+                    le.level_id,
+                    le.level_name,
+                    ro.room_id,
+                    ro.room_name
                 FROM users u
                 INNER JOIN roles r ON u.role_id = r.role_id
                 INNER JOIN teachers t ON u.user_id = t.user_id
@@ -709,7 +722,9 @@ class UsersController
                 LEFT JOIN places p ON sh.place_id = p.place_id
                 LEFT JOIN years y ON sh.year_id = y.year_id
                 LEFT JOIN cycles c ON sh.cycle_id = c.cycle_id
+                LEFT JOIN courses co ON sh.course_id = co.course_id
                 LEFT JOIN levels le ON sh.level_id = le.level_id
+                LEFT JOIN rooms ro ON sh.room_id = ro.room_id
                 WHERE u.user_id = :user_id";
 
         $query = $db->prepare($sql);
@@ -717,4 +732,5 @@ class UsersController
 
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
+
 }

@@ -16,7 +16,7 @@
             <form class="form__body" id="generate-timetable-form" method="POST">
 
                 <div class="form__group">
-					<label for="place_id" class="group__label">Classe :</label>
+					<label for="place_id" class="group__label">Centre :</label>
 					<select name="place_id" id="place_id" class="group__input" required></select>
 				</div>
 
@@ -36,7 +36,7 @@
 				</div>
 
                 <div class="form__group">
-                    <button type="submit" name="generate" class="group__button">Générer le PDF</button>
+                    <button type="submit" name="generate" class="group__button">Voir le PDF</button>
                 </div>
             </form>
 
